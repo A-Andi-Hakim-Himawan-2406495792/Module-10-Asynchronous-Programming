@@ -7,3 +7,11 @@ Teks "hey hey" tercetak sebelum "done!". Hal ini terjadi karena proses spawner.s
 
 ![Experiment 1.3](./screenshots/1.3E.png)
 Ketika beberapa task di-spawn, semuanya berjalan secara konkuren. "howdy", "howdy2", "howdy3" muncul nyaris bersamaan, diikuti jeda 2 detik, lalu "done", "done2", "done3" juga dieksekusi bersamaan. Penghapusan drop(spawner) menyebabkan program mengalami infinite loop (menggantung). drop(spawner) berfungsi memberi sinyal penutupan pada channel sender. Tanpanya, executor.run() akan terus berada dalam status listening karena mengira spawner masih aktif dan akan mengirimkan task baru.
+
+## Experiment 2.1
+
+![Experiment 1.1](./screenshots/2.1.1.png)
+![Experiment 1.1](./screenshots/2.1.2.png)
+![Experiment 1.1](./screenshots/2.1.3.png)
+![Experiment 1.1](./screenshots/2.1.4.png)
+Aplikasi terdiri dari server dan client. Ketika klien mengetik pesan, pesan dikirim via WebSockets ke server, lalu server mem-broadcast pesan tersebut ke channel di mana semua klien yang terhubung telah men-subscribe, sehingga pesan muncul di semua terminal klien.
