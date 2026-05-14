@@ -36,3 +36,10 @@ Penambahan informasi pengirim dilakukan di sisi server. Server memotong incoming
 ![img.png](screenshots/imgyew.png)
 ![img.png](screenshots/yewchat.png)
 Menjalankan repositori YewChat menggunakan trunk. Aplikasi berhasil memuat frontend WebAssembly di browser, menampilkan struktur UI bawaan, namun belum berfungsi mengirim pesan karena backend server belum berjalan.
+
+## Experiment 3.2
+
+![img.png](screenshots/crtv1.png)
+![img_1.png](screenshots/crtv2.png)
+Saya memodifikasi tampilan UI menggunakan Tailwind CSS, mengubah skema warna latar belakang menjadi biru tua, dan menambahkan teks sambutan khusus "Andi's Fasilkom Chat". Saya juga menyesuaikan tata letak agar lebih responsif. Kreativitas ini dilakukan untuk memberikan identitas unik pada aplikasi sesuai instruksi modul.
+

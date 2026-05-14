@@ -13,7 +13,6 @@ pub fn login() -> Html {
 
     let oninput = {
         let current_username = username.clone();
-
         Callback::from(move |e: InputEvent| {
             let input: HtmlInputElement = e.target_unchecked_into();
             current_username.set(input.value());
@@ -27,12 +26,34 @@ pub fn login() -> Html {
     };
 
     html! {
-       <div class="bg-gray-800 flex w-screen">
-            <div class="container mx-auto flex flex-col justify-center items-center">
-                <form class="m-4 flex">
-                    <input {oninput} class="rounded-l-lg p-4 border-t mr-0 border-b border-l text-gray-800 border-gray-200 bg-white" placeholder="Username" />
-                    <Link<Route> to={Route::Chat}> <button {onclick} disabled={username.len()<1} class="px-8 rounded-r-lg bg-violet-600	  text-white font-bold p-4 uppercase border-violet-600 border-t border-b border-r" >{"Go Chatting!"}</button></Link<Route>>
-                </form>
+       <div class="flex h-screen w-screen items-center justify-center bg-gradient-to-br from-slate-900 to-indigo-950">
+            <div class="w-full max-w-md rounded-2xl bg-white/10 p-8 shadow-2xl backdrop-blur-md border border-white/20">
+                <div class="mb-8 text-center">
+                    <h1 class="text-4xl font-extrabold text-white mb-2">{"Andi's Chat"}</h1>
+                    <p class="text-indigo-200">{"Fasilkom UI - Module 10 Async"}</p>
+                </div>
+
+                <div class="flex flex-col space-y-4">
+                    <input
+                        {oninput}
+                        class="w-full rounded-xl bg-slate-800/50 p-4 text-white placeholder-slate-400 outline-none ring-2 ring-indigo-500/50 focus:ring-indigo-400"
+                        placeholder="Masukkan Username..."
+                    />
+
+                    <Link<Route> to={Route::Chat}>
+                        <button
+                            {onclick}
+                            disabled={username.len() < 1}
+                            class="w-full rounded-xl bg-indigo-600 p-4 font-bold text-white transition-all hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-900/40"
+                        >
+                            {"JOIN CHAT"}
+                        </button>
+                    </Link<Route>>
+                </div>
+
+                <div class="mt-6 text-center text-xs text-slate-500">
+                    {"Tugas Modul 10 - Pemrograman Lanjut"}
+                </div>
             </div>
         </div>
     }

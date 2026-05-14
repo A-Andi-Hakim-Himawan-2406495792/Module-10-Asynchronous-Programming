@@ -46,6 +46,7 @@ pub struct Chat {
     wss: WebsocketService,
     messages: Vec<MessageData>,
 }
+
 impl Component for Chat {
     type Message = Msg;
     type Properties = ();
@@ -96,7 +97,7 @@ impl Component for Chat {
                                     "https://avatars.dicebear.com/api/adventurer-neutral/{}.svg",
                                     u
                                 )
-                                .into(),
+                                    .into(),
                             })
                             .collect();
                         return true;
@@ -107,9 +108,7 @@ impl Component for Chat {
                         self.messages.push(message_data);
                         return true;
                     }
-                    _ => {
-                        return false;
-                    }
+                    _ => false,
                 }
             }
             Msg::SubmitMessage => {
@@ -139,47 +138,55 @@ impl Component for Chat {
         let submit = ctx.link().callback(|_| Msg::SubmitMessage);
 
         html! {
-            <div class="flex w-screen">
-                <div class="flex-none w-56 h-screen bg-gray-100">
-                    <div class="text-xl p-3">{"Users"}</div>
+            <div class="flex w-screen h-screen bg-slate-50">
+                /* Sidebar Users */
+                <div class="flex-none w-64 bg-slate-900 text-white shadow-xl flex flex-col">
+                    <div class="p-6 border-b border-slate-800">
+                        <div class="text-2xl font-bold text-indigo-400">{"Online Users"}</div>
+                    </div>
+                    <div class="grow overflow-y-auto p-4 space-y-3">
                     {
                         self.users.clone().iter().map(|u| {
                             html!{
-                                <div class="flex m-3 bg-white rounded-lg p-2">
-                                    <div>
-                                        <img class="w-12 h-12 rounded-full" src={u.avatar.clone()} alt="avatar"/>
-                                    </div>
-                                    <div class="flex-grow p-3">
-                                        <div class="flex text-xs justify-between">
-                                            <div>{u.name.clone()}</div>
-                                        </div>
-                                        <div class="text-xs text-gray-400">
-                                            {"Hi there!"}
-                                        </div>
-                                    </div>
+                                <div class="flex items-center space-x-3 bg-slate-800/50 p-3 rounded-xl border border-slate-700/50">
+                                    <img class="w-10 h-10 rounded-full border-2 border-indigo-500" src={u.avatar.clone()} alt="avatar"/>
+                                    <div class="text-sm font-medium">{u.name.clone()}</div>
                                 </div>
                             }
                         }).collect::<Html>()
                     }
+                    </div>
                 </div>
-                <div class="grow h-screen flex flex-col">
-                    <div class="w-full h-14 border-b-2 border-gray-300"><div class="text-xl p-3">{"💬 Chat!"}</div></div>
-                    <div class="w-full grow overflow-auto border-b-2 border-gray-300">
+
+                /* Main Chat Area */
+                <div class="grow flex flex-col">
+                    /* Header */
+                    <div class="h-16 bg-white border-b flex items-center px-6 justify-between shadow-sm">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-2xl">{"💬"}</span>
+                            <span class="text-xl font-bold text-slate-800">{"Fasilkom Global Chat"}</span>
+                        </div>
+                    </div>
+
+                    /* Messages Area */
+                    <div class="grow overflow-y-auto p-6 space-y-4 bg-slate-50">
                         {
                             self.messages.iter().map(|m| {
-                                let user = self.users.iter().find(|u| u.name == m.from).unwrap();
+                                let avatar = self.users.iter()
+                                    .find(|u| u.name == m.from)
+                                    .map(|u| u.avatar.clone())
+                                    .unwrap_or_else(|| "https://avatars.dicebear.com/api/adventurer-neutral/default.svg".to_string());
+
                                 html!{
-                                    <div class="flex items-end w-3/6 bg-gray-100 m-8 rounded-tl-lg rounded-tr-lg rounded-br-lg ">
-                                        <img class="w-8 h-8 rounded-full m-3" src={user.avatar.clone()} alt="avatar"/>
-                                        <div class="p-3">
-                                            <div class="text-sm">
-                                                {m.from.clone()}
-                                            </div>
-                                            <div class="text-xs text-gray-500">
+                                    <div class="flex items-start space-x-3">
+                                        <img class="w-8 h-8 rounded-full shadow-sm mt-1" src={avatar} alt="avatar"/>
+                                        <div class="flex flex-col">
+                                            <div class="text-xs font-bold text-slate-500 ml-1 mb-1">{m.from.clone()}</div>
+                                            <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm border border-slate-200 max-w-md">
                                                 if m.message.ends_with(".gif") {
-                                                    <img class="mt-3" src={m.message.clone()}/>
+                                                    <img class="rounded-lg" src={m.message.clone()}/>
                                                 } else {
-                                                    {m.message.clone()}
+                                                    <div class="text-sm text-slate-700">{m.message.clone()}</div>
                                                 }
                                             </div>
                                         </div>
@@ -187,13 +194,23 @@ impl Component for Chat {
                                 }
                             }).collect::<Html>()
                         }
-
                     </div>
-                    <div class="w-full h-14 flex px-3 items-center">
-                        <input ref={self.chat_input.clone()} type="text" placeholder="Message" class="block w-full py-2 pl-4 mx-3 bg-gray-100 rounded-full outline-none focus:text-gray-700" name="message" required=true />
-                        <button onclick={submit} class="p-3 shadow-sm bg-blue-600 w-10 h-10 rounded-full flex justify-center items-center color-white">
-                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="fill-white">
-                                <path d="M0 0h24v24H0z" fill="none"></path><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
+
+                    /* Input Area */
+                    <div class="h-20 bg-white border-t flex items-center px-6 space-x-4">
+                        <input
+                            ref={self.chat_input.clone()}
+                            type="text"
+                            placeholder="Tulis pesan asinkronus..."
+                            class="grow bg-slate-100 rounded-xl px-5 py-3 outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-slate-900"
+                            onkeydown={ctx.link().callback(|e: KeyboardEvent| {
+                                if e.key() == "Enter" { Msg::SubmitMessage } else { Msg::HandleMsg("".to_string()) }
+                            })}
+                        />
+                        <button onclick={submit} class="bg-indigo-600 hover:bg-indigo-500 text-white p-3 rounded-xl transition-colors shadow-lg shadow-indigo-200">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
                             </svg>
                         </button>
                     </div>
