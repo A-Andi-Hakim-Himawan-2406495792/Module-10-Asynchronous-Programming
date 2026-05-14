@@ -30,3 +30,9 @@ Jika port pada client dibiarkan menunjuk ke 2000 sementara server sudah pindah k
 ![2.32.png](screenshots/2.32.png)
 ![2.33.png](screenshots/2.33.png)
 Penambahan informasi pengirim dilakukan di sisi server. Server memotong incoming message, menyisipkan format addr (IP dan Port soket client), sebelum memasukkannya ke broadcast channel. Hal ini krusial untuk melacak sumber pesan.
+
+## Experiment 3.1
+
+![img.png](screenshots/imgyew.png)
+![img.png](screenshots/yewchat.png)
+Menjalankan repositori YewChat menggunakan trunk. Aplikasi berhasil memuat frontend WebAssembly di browser, menampilkan struktur UI bawaan, namun belum berfungsi mengirim pesan karena backend server belum berjalan.
