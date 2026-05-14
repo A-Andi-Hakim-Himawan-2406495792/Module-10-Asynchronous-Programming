@@ -18,4 +18,15 @@ Aplikasi terdiri dari server dan client. Ketika klien mengetik pesan, pesan diki
 
 ## Experiment 2.2
 
-Pengubahan port WebSocket berhasil dilakukan. Kita wajib mengubah port di kedua sisi karena protokol ws:// mengharuskan sinkronisasi jalur komunikasi (handshake awal) antara client (URI request) dan server (TCP Listener).
+Pengubahan port dari 2000 menjadi 8080 berhasil dilakukan. Perubahan ini wajib diterapkan secara sinkron di kedua belah pihak (Server dan Client) karena mekanisme komunikasi WebSocket yang berjalan di atas protokol TCP.
+
+Secara teknis, server bertugas membuka jalur jaringan dan mendengarkan permintaan masuk secara aktif melalui TcpListener::bind("127.0.0.1:8080"). Di sisi lain, client adalah pihak yang memulai koneksi. Saat client memanggil alamat Uri::from_static("ws://127.0.0.1:8080"), ia mengirimkan HTTP Request awal untuk melakukan WebSocket Handshake, yaitu proses persetujuan antara client dan server untuk mengubah (upgrade) jalur HTTP biasa menjadi saluran komunikasi WebSocket dua arah.
+
+Jika port pada client dibiarkan menunjuk ke 2000 sementara server sudah pindah ke 8080, client akan mengetuk "pintu" jaringan yang salah atau tertutup, sehingga koneksi TCP ditolak (Connection Refused). Oleh karena itu, kecocokan port antara URI request klien dan TCP Listener server adalah syarat mutlak agar koneksi dapat terjalin.
+
+## Experiment 2.3
+
+![2.31.png](screenshots/2.31.png)
+![2.32.png](screenshots/2.32.png)
+![2.33.png](screenshots/2.33.png)
+Penambahan informasi pengirim dilakukan di sisi server. Server memotong incoming message, menyisipkan format addr (IP dan Port soket client), sebelum memasukkannya ke broadcast channel. Hal ini krusial untuk melacak sumber pesan.

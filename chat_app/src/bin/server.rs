@@ -12,13 +12,16 @@ async fn handle_connection(
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     ws_stream.send(Message::text("Welcome to Fasilkom chat!".to_string())).await?;
     let mut bcast_rx = bcast_tx.subscribe();
+
     loop {
         tokio::select! {
             incoming = ws_stream.next() => {
                 match incoming {
                     Some(Ok(msg)) => {
                         if let Some(text) = msg.as_text() {
-                            bcast_tx.send(text.into())?;
+                            // Tambahkan IP dan Port (addr) ke teks pesan
+                            let msg_with_addr = format!("{}: {}", addr, text);
+                            bcast_tx.send(msg_with_addr)?;
                         }
                     }
                     Some(Err(err)) => return Err(err.into()),
@@ -35,12 +38,16 @@ async fn handle_connection(
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let (bcast_tx, _) = broadcast::channel(16);
+
+    // Bind ke port 8080 (Eksperimen 2.2)
     let listener = TcpListener::bind("127.0.0.1:8080").await?;
-    println!("listening on port 2000");
+    println!("listening on port 8080");
+
     loop {
         let (socket, addr) = listener.accept().await?;
         println!("New connection from {addr:?}");
         let bcast_tx = bcast_tx.clone();
+
         tokio::spawn(async move {
             let ws_stream = ServerBuilder::new().accept(socket).await?;
             if let Err(e) = handle_connection(addr, ws_stream, bcast_tx).await {
