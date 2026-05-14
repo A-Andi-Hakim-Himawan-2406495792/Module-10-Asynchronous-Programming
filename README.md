@@ -15,3 +15,7 @@ Ketika beberapa task di-spawn, semuanya berjalan secara konkuren. "howdy", "howd
 ![Experiment 1.1](./screenshots/2.1.3.png)
 ![Experiment 1.1](./screenshots/2.1.4.png)
 Aplikasi terdiri dari server dan client. Ketika klien mengetik pesan, pesan dikirim via WebSockets ke server, lalu server mem-broadcast pesan tersebut ke channel di mana semua klien yang terhubung telah men-subscribe, sehingga pesan muncul di semua terminal klien.
+
+## Experiment 2.2
+
+Pengubahan port WebSocket berhasil dilakukan. Kita wajib mengubah port di kedua sisi karena protokol ws:// mengharuskan sinkronisasi jalur komunikasi (handshake awal) antara client (URI request) dan server (TCP Listener).
